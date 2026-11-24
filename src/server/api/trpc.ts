@@ -1,7 +1,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { db } from "~/server/db";
+import { appRuntime } from "~/server/db";
 import { sha, validModSession } from "~/lib/safety";
 
 const parse = (h: string | null) =>
@@ -10,6 +10,9 @@ const parse = (h: string | null) =>
   ) as Record<string, string>;
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  // Called once per request: `next build` imports this module without the
+  // runtime environment, so load()/input() must not run at module scope.
+  const { client, tokenPepper, modPassphraseHash } = appRuntime();
   const jar = parse(opts.headers.get("cookie"));
   const setCookies: string[] = [];
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
@@ -20,7 +23,15 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     token = Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
     setCookies.push(`pb_dev=${token}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax${secure}`);
   }
-  return { db, dev: sha("dev:" + token), modOk: validModSession(jar.pb_mod), setCookies, secure };
+  return {
+    db: client,
+    tokenPepper,
+    modPassphraseHash,
+    dev: sha("dev:" + token, tokenPepper),
+    modOk: validModSession(jar.pb_mod, tokenPepper),
+    setCookies,
+    secure,
+  };
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
