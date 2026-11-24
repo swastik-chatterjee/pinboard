@@ -1,21 +1,44 @@
 # Pinboard (v1 source overlay)
 
-Built from the Pinboard PRD v1.1. This is the app code laid over a standard T3 scaffold, so you get the exact versions your tooling expects.
+Built from the Pinboard PRD v1.1. This is the app code laid over a standard T3 scaffold.
 
 ## Setup
+
 This is a complete project (package.json, configs, tRPC client included).
+
 ```bash
-bun install            # or npm install
-cp .env.example .env   # then fill it in (see comments inside)
-bun run db:push        # creates the tables in your Prisma Postgres database
+bun install
+cp .env.example .env
+# Fill in DATABASE_URL and other values described in .env.example
+bun run db:push
 bun run dev
 ```
+
 Moderate at `/moderate`. Schedule `bun run cleanup` nightly.
 
 To make `MOD_PASSPHRASE_HASH`:
-`bun -e 'import {randomBytes,scryptSync} from "crypto";const s=randomBytes(16).toString("hex");console.log(s+":"+scryptSync(process.argv[1],s,32).toString("hex"))' "your passphrase"`
 
-Stack: Next.js 15 (App Router), React 19, tRPC 11, Prisma 6, Tailwind 4, Leaflet.
+```bash
+bun -e 'import {randomBytes,scryptSync} from "crypto";const s=randomBytes(16).toString("hex");console.log(s+":"+scryptSync(process.argv[1],s,32).toString("hex"))' "your passphrase"
+```
+
+Stack: Next.js 16, React 19, tRPC 11, Prisma 7, Tailwind 4, Leaflet.
+
+## Development
+
+```bash
+bun run typecheck
+bun run build
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## License
+
+Pinboard is licensed under the Mozilla Public License 2.0. See [LICENSE](LICENSE). Third-party dependencies are documented in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 ## Not in this first build
-Shareable post links (P-7), the edit-by-secret screen (the `kindness.editByToken` API is done), the 4 unit-test files and Playwright flows, and the 3 leftover accessibility items (focus trap in the sheet, keyboard pin drop, screen-reader live map summary beyond the basic label).
+
+Shareable post links, the edit-by-secret screen, unit and Playwright test suites, and several remaining accessibility improvements.
