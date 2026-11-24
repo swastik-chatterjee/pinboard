@@ -3,8 +3,7 @@ import { snap } from "./snap";
 
 export { snap };
 export const gridKey = (lat: number, lng: number) => `${lat}:${lng}`;
-export const pepper = () => process.env.TOKEN_PEPPER ?? "dev-pepper-change-me";
-export const sha = (s: string) => createHash("sha256").update(pepper() + s).digest("hex");
+export const sha = (s: string, pepper: string) => createHash("sha256").update(pepper + s).digest("hex");
 
 /** 128 bits of CSPRNG entropy, hex encoded. Shown once, stored only as a hash. */
 export function newSecret() {
@@ -37,18 +36,18 @@ export const buckets = (d = new Date()) => {
   return { hour: day + p(d.getUTCHours()), day };
 };
 
-// Moderation: MOD_PASSPHRASE_HASH is "salt:hexhash" (see README); the session is a signed, expiring cookie value.
-export function verifyPassphrase(pass: string) {
-  const [salt, hash] = (process.env.MOD_PASSPHRASE_HASH ?? "").split(":");
+// Moderation: modPassphraseHash is "salt:hexhash" (see README); the session is a signed, expiring cookie value.
+export function verifyPassphrase(pass: string, modPassphraseHash: string) {
+  const [salt, hash] = modPassphraseHash.split(":");
   if (!salt || !hash) return false;
   const a = scryptSync(pass, salt, 32), b = Buffer.from(hash, "hex");
   return a.length === b.length && timingSafeEqual(a, b);
 }
-const sign = (t: string) => createHmac("sha256", pepper()).update("mod:" + t).digest("hex");
-export const makeModSession = () => { const t = String(Date.now()); return `${t}.${sign(t)}`; };
-export function validModSession(v?: string) {
+const sign = (t: string, pepper: string) => createHmac("sha256", pepper).update("mod:" + t).digest("hex");
+export const makeModSession = (pepper: string) => { const t = String(Date.now()); return `${t}.${sign(t, pepper)}`; };
+export function validModSession(v: string | undefined, pepper: string) {
   const [t, sig] = (v ?? "").split(".");
   if (!t || !sig || Date.now() - Number(t) > 60 * 60 * 1000) return false;
-  const a = Buffer.from(sig), b = Buffer.from(sign(t));
+  const a = Buffer.from(sig), b = Buffer.from(sign(t, pepper));
   return a.length === b.length && timingSafeEqual(a, b);
 }

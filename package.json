@@ -5,24 +5,26 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:push": "prisma db push",
-    "cleanup": "bun run scripts/cleanup.ts",
-    "postinstall": "prisma generate"
+    "cleanup": "bun run scripts/cleanup.ts"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "7.10.1",
-    "@prisma/client": "7.10.1",
+    "@prisma/composer": "0.40.0",
+    "@prisma/composer-prisma-cloud": "0.40.0",
+    "@prisma/orm-postgres": "8.0.0-rc.25",
     "@tanstack/react-query": "^5.66.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
+    "arktype": "^2.2.3",
+    "effect": "4.1.4",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
-    "next": "16.4.6",
-    "pg": "^8.16.3",
+    "next": "^15.2.0",
+    "pg": "^8.22.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
@@ -34,13 +36,19 @@
     "@types/leaflet": "^1.9.15",
     "@types/leaflet.markercluster": "^1.5.5",
     "@types/node": "^22.0.0",
-    "@types/pg": "^8.15.5",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "dotenv": "^16.6.1",
     "postcss": "^8.5.0",
-    "prisma": "7.10.1",
+    "prisma": "8.0.0-rc.35",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0"
+  },
+  "overrides": {
+    "effect": "4.1.4",
+    "@effect/platform-bun": "4.1.4",
+    "@effect/platform-node": "4.1.4",
+    "@effect/platform-node-shared": "4.1.4"
   }
 }

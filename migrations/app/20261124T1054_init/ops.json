@@ -1,0 +1,573 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.PostStatus",
+    "label": "Create enum type \"PostStatus\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "PostStatus"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"PostStatus\"",
+        "sql": "CREATE TYPE \"public\".\"PostStatus\" AS ENUM ('LIVE', 'HIDDEN', 'DELETED')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.Heart",
+    "label": "Create table \"Heart\"",
+    "summary": "Creates table \"Heart\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Heart"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Heart\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Heart\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Heart\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Heart\"",
+        "sql": "CREATE TABLE \"public\".\"Heart\" (\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"deviceId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"postId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Heart\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Heart\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Heart\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.KindnessPost",
+    "label": "Create table \"KindnessPost\"",
+    "summary": "Creates table \"KindnessPost\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "KindnessPost"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"KindnessPost\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"KindnessPost\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"KindnessPost\"",
+        "sql": "CREATE TABLE \"public\".\"KindnessPost\" (\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"deviceFp\" text NOT NULL,\n  \"firstName\" text DEFAULT '' NOT NULL,\n  \"gridKey\" text NOT NULL,\n  \"hearts\" int4 DEFAULT 0 NOT NULL,\n  \"id\" text NOT NULL,\n  \"lat\" float8 NOT NULL,\n  \"lng\" float8 NOT NULL,\n  \"message\" text NOT NULL,\n  \"secretHash\" text NOT NULL,\n  \"status\" \"PostStatus\" DEFAULT 'LIVE'::\"PostStatus\" NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"KindnessPost\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"KindnessPost\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.RateBus",
+    "label": "Create table \"RateBus\"",
+    "summary": "Creates table \"RateBus\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "RateBus"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"RateBus\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"RateBus\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"RateBus\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"RateBus\"",
+        "sql": "CREATE TABLE \"public\".\"RateBus\" (\n  \"count\" int4 DEFAULT 0 NOT NULL,\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"key\" text NOT NULL,\n  \"updatedAt\" timestamp(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"RateBus\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"RateBus\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"RateBus\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Report",
+    "label": "Create table \"Report\"",
+    "summary": "Creates table \"Report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Report\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Report\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Report\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Report\"",
+        "sql": "CREATE TABLE \"public\".\"Report\" (\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"note\" text DEFAULT '' NOT NULL,\n  \"postId\" text NOT NULL,\n  \"reason\" text NOT NULL,\n  \"reporterD\" text NOT NULL,\n  \"resolved\" bool DEFAULT false NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Report\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Report\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Report\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.Heart.Heart_postId_deviceId_key",
+    "label": "Create index \"Heart_postId_deviceId_key\" on \"Heart\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Heart_postId_deviceId_key",
+        "table": "Heart"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Heart_postId_deviceId_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Heart_postId_deviceId_key\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Heart_postId_deviceId_key\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Heart_postId_deviceId_key\"",
+        "sql": "CREATE UNIQUE INDEX \"Heart_postId_deviceId_key\" ON \"public\".\"Heart\" (\"postId\", \"deviceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Heart_postId_deviceId_key\" exists on \"Heart\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND \"i\".\"indisunique\" AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Heart_postId_deviceId_key\"",
+          "i",
+          "I",
+          "\"public\".\"Heart\"",
+          "btree",
+          "[\"postId\",\"deviceId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.KindnessPost.KindnessPost_createdAt_idx",
+    "label": "Create index \"KindnessPost_createdAt_idx\" on \"KindnessPost\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "KindnessPost_createdAt_idx",
+        "table": "KindnessPost"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"KindnessPost_createdAt_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost_createdAt_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"KindnessPost_createdAt_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"KindnessPost_createdAt_idx\"",
+        "sql": "CREATE INDEX \"KindnessPost_createdAt_idx\" ON \"public\".\"KindnessPost\" (\"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"KindnessPost_createdAt_idx\" exists on \"KindnessPost\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost_createdAt_idx\"",
+          "i",
+          "I",
+          "\"public\".\"KindnessPost\"",
+          "btree",
+          "[\"createdAt\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.KindnessPost.KindnessPost_deviceFp_createdAt_idx",
+    "label": "Create index \"KindnessPost_deviceFp_createdAt_idx\" on \"KindnessPost\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "KindnessPost_deviceFp_createdAt_idx",
+        "table": "KindnessPost"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"KindnessPost_deviceFp_createdAt_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost_deviceFp_createdAt_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"KindnessPost_deviceFp_createdAt_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"KindnessPost_deviceFp_createdAt_idx\"",
+        "sql": "CREATE INDEX \"KindnessPost_deviceFp_createdAt_idx\" ON \"public\".\"KindnessPost\" (\"deviceFp\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"KindnessPost_deviceFp_createdAt_idx\" exists on \"KindnessPost\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost_deviceFp_createdAt_idx\"",
+          "i",
+          "I",
+          "\"public\".\"KindnessPost\"",
+          "btree",
+          "[\"deviceFp\",\"createdAt\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.KindnessPost.KindnessPost_lat_lng_idx",
+    "label": "Create index \"KindnessPost_lat_lng_idx\" on \"KindnessPost\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "KindnessPost_lat_lng_idx",
+        "table": "KindnessPost"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"KindnessPost_lat_lng_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost_lat_lng_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"KindnessPost_lat_lng_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"KindnessPost_lat_lng_idx\"",
+        "sql": "CREATE INDEX \"KindnessPost_lat_lng_idx\" ON \"public\".\"KindnessPost\" (\"lat\", \"lng\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"KindnessPost_lat_lng_idx\" exists on \"KindnessPost\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"KindnessPost_lat_lng_idx\"",
+          "i",
+          "I",
+          "\"public\".\"KindnessPost\"",
+          "btree",
+          "[\"lat\",\"lng\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.RateBus.RateBus_key_key",
+    "label": "Create index \"RateBus_key_key\" on \"RateBus\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "RateBus_key_key",
+        "table": "RateBus"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"RateBus_key_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"RateBus_key_key\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"RateBus_key_key\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"RateBus_key_key\"",
+        "sql": "CREATE UNIQUE INDEX \"RateBus_key_key\" ON \"public\".\"RateBus\" (\"key\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"RateBus_key_key\" exists on \"RateBus\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND \"i\".\"indisunique\" AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"RateBus_key_key\"",
+          "i",
+          "I",
+          "\"public\".\"RateBus\"",
+          "btree",
+          "[\"key\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Report.Report_postId_createdAt_idx",
+    "label": "Create index \"Report_postId_createdAt_idx\" on \"Report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Report_postId_createdAt_idx",
+        "table": "Report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Report_postId_createdAt_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Report_postId_createdAt_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Report_postId_createdAt_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Report_postId_createdAt_idx\"",
+        "sql": "CREATE INDEX \"Report_postId_createdAt_idx\" ON \"public\".\"Report\" (\"postId\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Report_postId_createdAt_idx\" exists on \"Report\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Report_postId_createdAt_idx\"",
+          "i",
+          "I",
+          "\"public\".\"Report\"",
+          "btree",
+          "[\"postId\",\"createdAt\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Report.Report_postId_reporterD_key",
+    "label": "Create index \"Report_postId_reporterD_key\" on \"Report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Report_postId_reporterD_key",
+        "table": "Report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Report_postId_reporterD_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Report_postId_reporterD_key\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Report_postId_reporterD_key\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Report_postId_reporterD_key\"",
+        "sql": "CREATE UNIQUE INDEX \"Report_postId_reporterD_key\" ON \"public\".\"Report\" (\"postId\", \"reporterD\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Report_postId_reporterD_key\" exists on \"Report\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND \"i\".\"indisunique\" AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Report_postId_reporterD_key\"",
+          "i",
+          "I",
+          "\"public\".\"Report\"",
+          "btree",
+          "[\"postId\",\"reporterD\"]"
+        ]
+      }
+    ]
+  }
+]
