@@ -13,14 +13,14 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^6.2.0",
+    "@prisma/client": "7.10.1",
     "@tanstack/react-query": "^5.66.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
-    "next": "^15.2.0",
+    "next": "16.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
@@ -35,7 +35,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "postcss": "^8.5.0",
-    "prisma": "^6.2.0",
+    "prisma": "7.10.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0"
   }
