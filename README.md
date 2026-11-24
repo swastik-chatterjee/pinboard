@@ -42,3 +42,5 @@ Pinboard is licensed under the Mozilla Public License 2.0. See [LICENSE](LICENSE
 ## Not in this first build
 
 Shareable post links, the edit-by-secret screen, unit and Playwright test suites, and several remaining accessibility improvements.
+
+## Think creative MPLv2
